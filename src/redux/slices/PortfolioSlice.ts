@@ -33,3 +33,5 @@ const portfolioSlice = createSlice({
 
 export const { addToPortfolio, removeFromPortfolio } = portfolioSlice.actions;
 export default portfolioSlice.reducer;
+
+
