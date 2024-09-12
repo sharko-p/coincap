@@ -1,23 +1,19 @@
-// import Navigation from "./routes/navigation-component/Navigation";
-import CryptocurrencyTable from "./cryptocurrencyTable/CryptocurrencyTable";
-import Header from "./header/Header";
-function App() {
-  return (
-    <div
-      className="App"
-      style={{
-        width: "100%",
-        maxWidth: "1200px",
-        margin: "0 auto",
-        padding: "0 15px",
-      }}
-    >
-      {/* <Navigation /> */}
 
-      <Header />
-      <CryptocurrencyTable/>
-    </div>
-  );
+import { AppRouter } from '../routes/AppRoutes'
+
+export const App = () => {
+    return (
+        <div
+            className="App"
+            style={{
+                width: '100%',
+                maxWidth: '1200px',
+                margin: '0 auto',
+                padding: '0 15px',
+            }}
+        >
+            <AppRouter />
+
+        </div>
+    )
 }
-
-export default App;
