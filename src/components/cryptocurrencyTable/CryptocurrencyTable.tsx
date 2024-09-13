@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { addToPortfolio } from "../../redux/slices/PortfolioSlice";
 import { ValueValidation } from "./Validation";
 import { useNavigate } from "react-router-dom";
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from "antd/es/table";
 import * as yup from "yup";
 
 const API_KEY = import.meta.env.VITE_API_KEY;
@@ -60,24 +60,30 @@ const CryptocurrencyTable: React.FC = () => {
           throw new Error("API URL not specified");
         }
 
-        const response = await axios.get<CryptoApiResponse>(`${API_URL}/assets`, {
-          headers: {
-            Authorization: API_KEY ? `Bearer ${API_KEY}` : "",
-            "Accept-Encoding": "gzip, deflate",
-          },
-        });
+        const response = await axios.get<CryptoApiResponse>(
+          `${API_URL}/assets`,
+          {
+            headers: {
+              Authorization: API_KEY ? `Bearer ${API_KEY}` : "",
+            },
+          }
+        );
 
         setCryptos(response.data.data);
 
         const tableData = response.data.data.map((crypto) => {
-          const inBillions = (parseFloat(crypto.marketCapUsd) / 1000000000).toFixed(2);
+          const inBillions = (
+            parseFloat(crypto.marketCapUsd) / 1000000000
+          ).toFixed(2);
           return {
             key: String(crypto.id),
             rank: crypto.rank,
             symbol: crypto.symbol,
             name: crypto.name,
             vwap24Hr: `${parseFloat(crypto.vwap24Hr).toFixed(2)}$`,
-            changePercent24Hr: `${parseFloat(crypto.changePercent24Hr).toFixed(2)}%`,
+            changePercent24Hr: `${parseFloat(crypto.changePercent24Hr).toFixed(
+              2
+            )}%`,
             marketCapUsd: `${inBillions} млрд $`,
             priceUsd: `${parseFloat(crypto.priceUsd).toFixed(2)}$`,
             description: crypto.description || "No description available",
@@ -94,11 +100,11 @@ const CryptocurrencyTable: React.FC = () => {
   }, []);
 
   const handleRowClick = (cryptoId: string) => {
-    navigate(`/CryptocurrencyDetails/${cryptoId}`); // Переход на страницу с деталями криптовалюты
+    navigate(`/CryptocurrencyDetails/${cryptoId}`);
   };
 
   const handleAddClick = (crypto: Crypto, e: React.MouseEvent) => {
-    e.stopPropagation(); // Остановить всплытие события, чтобы не сработало на строке
+    e.stopPropagation();
     setSelectedCrypto(crypto);
     setIsModalVisible(true);
   };
@@ -109,8 +115,12 @@ const CryptocurrencyTable: React.FC = () => {
 
       if (selectedCrypto && validCryptoAmount) {
         const amountToAdd = parseFloat(validCryptoAmount);
-        dispatch(addToPortfolio({ symbol: selectedCrypto.symbol, amount: amountToAdd }));
-        message.success(`${validCryptoAmount} ${selectedCrypto.symbol} добавлено в ваш портфель`);
+        dispatch(
+          addToPortfolio({ symbol: selectedCrypto.symbol, amount: amountToAdd })
+        );
+        message.success(
+          `${validCryptoAmount} ${selectedCrypto.symbol} добавлено в ваш портфель`
+        );
       }
 
       setIsModalVisible(false);
@@ -138,7 +148,9 @@ const CryptocurrencyTable: React.FC = () => {
       title: "",
       dataIndex: "symbol",
       key: "symbol",
-      render: (text) => <span style={{ color: "#8f1aa3", fontWeight: "bold" }}>{text}</span>,
+      render: (text) => (
+        <span style={{ color: "#8f1aa3", fontWeight: "bold" }}>{text}</span>
+      ),
     },
     {
       title: "Name",
@@ -163,7 +175,8 @@ const CryptocurrencyTable: React.FC = () => {
       title: "Change (24Hr)",
       dataIndex: "changePercent24Hr",
       key: "changePercent24Hr",
-      sorter: (a, b) => parseFloat(a.changePercent24Hr) - parseFloat(b.changePercent24Hr),
+      sorter: (a, b) =>
+        parseFloat(a.changePercent24Hr) - parseFloat(b.changePercent24Hr),
       render: (text) => {
         const change = parseFloat(text);
         const color = change < 0 ? "red" : "green";
@@ -186,7 +199,13 @@ const CryptocurrencyTable: React.FC = () => {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
-        <Button onClick={(e) => handleAddClick(cryptos.find((c) => c.id === record.key)!, e)}>+</Button>
+        <Button
+          onClick={(e) =>
+            handleAddClick(cryptos.find((c) => c.id === record.key)!, e)
+          }
+        >
+          +
+        </Button>
       ),
     },
   ];
@@ -209,7 +228,11 @@ const CryptocurrencyTable: React.FC = () => {
         onCancel={handleCancel}
       >
         <p>Введите количество {selectedCrypto?.symbol} для покупки:</p>
-        <Input value={cryptoAmount} onChange={(e) => setCryptoAmount(e.target.value)} placeholder="Введите количество" />
+        <Input
+          value={cryptoAmount}
+          onChange={(e) => setCryptoAmount(e.target.value)}
+          placeholder="Введите количество"
+        />
       </Modal>
     </>
   );

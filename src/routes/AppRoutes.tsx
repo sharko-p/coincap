@@ -6,17 +6,17 @@ import CryptocurrencyDetails from "../pages/CryptocurrencyDetails/Cryptocurrency
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: (
       <>
-        <Header /> 
-        <CryptocurrencyTable /> 
+        <Header />
+        <CryptocurrencyTable />
       </>
     ),
   },
   {
-    path: '/CryptocurrencyDetails/:id',
-    element: <CryptocurrencyDetails />, 
+    path: "/CryptocurrencyDetails/:id",
+    element: <CryptocurrencyDetails />,
   },
 ]);
 

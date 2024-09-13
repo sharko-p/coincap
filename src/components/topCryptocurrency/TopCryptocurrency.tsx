@@ -40,7 +40,6 @@ const TopCryptocurrency = () => {
           {
             headers: {
               Authorization: API_KEY ? `Bearer ${API_KEY}` : "",
-              "Accept-Encoding": "gzip, deflate",
             },
             params: {
               limit: 3,
@@ -58,24 +57,24 @@ const TopCryptocurrency = () => {
   }, []);
   return (
     <>
-<div>
-      <p>Популярные криптовалюты:</p>
-      <ul style={{ display: "flex", listStyle: "none", padding: 0 }}>
-        {cryptos.map((crypto) => (
-          <li
-            key={crypto.id}
-            style={{
-              margin: "0 15px",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <span>{crypto.name}</span>
-            <span>${parseFloat(crypto.priceUsd).toFixed(2)}</span>
-          </li>
-        ))}
-      </ul>
-   </div>
+      <div>
+        <p>Популярные криптовалюты:</p>
+        <ul style={{ display: "flex", listStyle: "none", padding: 0 }}>
+          {cryptos.map((crypto) => (
+            <li
+              key={crypto.id}
+              style={{
+                margin: "0 15px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span>{crypto.name}</span>
+              <span>${parseFloat(crypto.priceUsd).toFixed(2)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </>
   );
 };
