@@ -2,12 +2,12 @@
   "name": "coincap",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://sharko-p.github.io/coincap/", 
+  "homepage": "https://sharko-p.github.io/coincap/",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d dist",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -44,4 +44,3 @@
     "vite": "^5.4.1"
   }
 }
-

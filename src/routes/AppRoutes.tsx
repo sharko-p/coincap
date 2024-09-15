@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Header from "../components/header/Header";
 import CryptocurrencyTable from "../components/cryptocurrencyTable/CryptocurrencyTable";
@@ -6,7 +5,7 @@ import CryptocurrencyDetails from "../pages/CryptocurrencyDetails/Cryptocurrency
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/coincap/",
     element: (
       <>
         <Header />
@@ -15,7 +14,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/CryptocurrencyDetails/:id",
+    path: "/coincap/CryptocurrencyDetails/:id",
     element: <CryptocurrencyDetails />,
   },
 ]);
