@@ -12,9 +12,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 const Portfolio = () => {
   const dispatch = useDispatch();
   const portfolio = useSelector((state: RootState) => state.portfolio.cryptos);
-  const [cryptoPrices, setCryptoPrices] = useState<{
-    [symbol: string]: number;
-  }>({});
+  const [cryptoPrices, setCryptoPrices] = useState<{ [symbol: string]: number }>({});
   const [totalValue, setTotalValue] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -45,20 +43,15 @@ const Portfolio = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      Object.keys(portfolio).length > 0 &&
-      Object.keys(cryptoPrices).length > 0
-    ) {
-      let total = 0;
+    let total = 0;
 
-      Object.keys(portfolio).forEach((symbol) => {
-        const amount = portfolio[symbol];
-        const price = cryptoPrices[symbol] || 0;
-        total += amount * price;
-      });
+    Object.keys(portfolio).forEach((symbol) => {
+      const amount = portfolio[symbol];
+      const price = cryptoPrices[symbol] || 0;
+      total += amount * price;
+    });
 
-      setTotalValue(total);
-    }
+    setTotalValue(total);
   }, [portfolio, cryptoPrices]);
 
   const showModal = () => {
@@ -98,8 +91,7 @@ const Portfolio = () => {
           {Object.keys(portfolio).map((symbol) => (
             <li key={symbol}>
               {symbol}: {portfolio[symbol].toFixed(4)} (
-              {(portfolio[symbol] * (cryptoPrices[symbol] || 0)).toFixed(2)}{" "}
-              USD)
+              {(portfolio[symbol] * (cryptoPrices[symbol] || 0)).toFixed(2)} USD)
               <Button type="link" onClick={() => handleRemoveCrypto(symbol)}>
                 Удалить
               </Button>
