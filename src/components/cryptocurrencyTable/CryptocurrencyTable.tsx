@@ -100,7 +100,7 @@ const CryptocurrencyTable: React.FC = () => {
   }, []);
 
   const handleRowClick = (cryptoId: string) => {
-    navigate(`/CryptocurrencyDetails/${cryptoId}`);
+    navigate(`CryptocurrencyDetails/${cryptoId}`);
   };
 
   const handleAddClick = (crypto: Crypto, e: React.MouseEvent) => {

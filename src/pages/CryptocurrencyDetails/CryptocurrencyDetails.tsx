@@ -173,7 +173,7 @@ const CryptocurrencyDetails: React.FC = () => {
         <p>Нет доступных исторических данных для отображения.</p>
       )}
 
-      <Button onClick={() => navigate(`/`)}>
+      <Button onClick={() => navigate(`/coincap/`)}>
         Вернуться к перечню криптовалют
       </Button>
     </div>
