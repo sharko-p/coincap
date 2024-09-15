@@ -5,7 +5,7 @@ import CryptocurrencyDetails from "../pages/CryptocurrencyDetails/Cryptocurrency
 
 const router = createBrowserRouter([
   {
-    path: "/coincap/",
+    path: "/",
     element: (
       <>
         <Header />
@@ -14,10 +14,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/coincap/CryptocurrencyDetails/:id",
+    path: "/CryptocurrencyDetails/:id",
     element: <CryptocurrencyDetails />,
   },
-]);
+], {basename:'/coincap'});
 
 export const AppRouter = () => {
   return (
