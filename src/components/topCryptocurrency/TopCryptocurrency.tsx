@@ -1,27 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Crypto, CryptoApiResponse } from "./types";
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const API_URL = import.meta.env.VITE_API_URL;
-
-interface Crypto {
-  id: string;
-  rank: string;
-  symbol: string;
-  name: string;
-  supply: string;
-  maxSupply: string | null;
-  marketCapUsd: string;
-  volumeUsd24Hr: string;
-  priceUsd: string;
-  changePercent24Hr: string;
-  vwap24Hr: string;
-}
-
-interface CryptoApiResponse {
-  data: Crypto[];
-  timestamp: number;
-}
 
 const TopCryptocurrency = () => {
   const [cryptos, setCryptos] = useState<Crypto[]>([]);
@@ -29,12 +11,6 @@ const TopCryptocurrency = () => {
   useEffect(() => {
     const fetchCryptos = async () => {
       try {
-        if (!API_URL) {
-          throw new Error(
-            "API_URL не указан. Пожалуйста, добавьте VITE_API_URL в ваш .env файл."
-          );
-        }
-
         const response = await axios.get<CryptoApiResponse>(
           `${API_URL}/assets`,
           {

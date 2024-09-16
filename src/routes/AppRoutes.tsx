@@ -3,21 +3,24 @@ import Header from "../components/header/Header";
 import CryptocurrencyTable from "../components/cryptocurrencyTable/CryptocurrencyTable";
 import CryptocurrencyDetails from "../pages/CryptocurrencyDetails/CryptocurrencyDetails";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <>
-        <Header />
-        <CryptocurrencyTable />
-      </>
-    ),
-  },
-  {
-    path: "/CryptocurrencyDetails/:id",
-    element: <CryptocurrencyDetails />,
-  },
-], {basename:'/coincap'});
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: (
+        <>
+          <Header />
+          <CryptocurrencyTable />
+        </>
+      ),
+    },
+    {
+      path: "/CryptocurrencyDetails/:id",
+      element: <CryptocurrencyDetails />,
+    },
+  ],
+  { basename: "/coincap" }
+);
 
 export const AppRouter = () => {
   return (

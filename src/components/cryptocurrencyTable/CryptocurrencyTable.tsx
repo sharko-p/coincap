@@ -1,65 +1,25 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, Button, Modal, Input, message } from "antd";
-import { useDispatch } from "react-redux";
-import { addToPortfolio } from "../../redux/slices/PortfolioSlice";
-import { ValueValidation } from "./Validation";
+import { Table, Button } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { openModal } from "../../redux/slices/PortfolioSlice";
+import { Crypto, CryptoApiResponse, DataType } from "./types";
+import AddToPortfolioModal from "../addPortfolioModal/AddPorfolioModal";
 import type { ColumnsType } from "antd/es/table";
-import * as yup from "yup";
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const API_URL = import.meta.env.VITE_API_URL;
 
-interface Crypto {
-  id: string;
-  rank: string;
-  symbol: string;
-  name: string;
-  supply: string;
-  maxSupply: string | null;
-  marketCapUsd: string;
-  volumeUsd24Hr: string;
-  priceUsd: string;
-  changePercent24Hr: string;
-  vwap24Hr: string;
-  description?: string;
-}
-
-interface CryptoApiResponse {
-  data: Crypto[];
-  timestamp: number;
-}
-
-interface DataType {
-  key: string;
-  rank: string;
-  symbol: string;
-  name: string;
-  vwap24Hr: string;
-  changePercent24Hr: string;
-  marketCapUsd: string;
-  priceUsd: string;
-  description?: string;
-}
-
 const CryptocurrencyTable: React.FC = () => {
   const [cryptos, setCryptos] = useState<Crypto[]>([]);
   const [tableData, setTableData] = useState<DataType[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedCrypto, setSelectedCrypto] = useState<Crypto | null>(null);
-  const [cryptoAmount, setCryptoAmount] = useState<string>("");
-
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCryptos = async () => {
       try {
-        if (!API_URL) {
-          throw new Error("API URL not specified");
-        }
-
         const response = await axios.get<CryptoApiResponse>(
           `${API_URL}/assets`,
           {
@@ -105,36 +65,7 @@ const CryptocurrencyTable: React.FC = () => {
 
   const handleAddClick = (crypto: Crypto, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSelectedCrypto(crypto);
-    setIsModalVisible(true);
-  };
-
-  const handleOk = async () => {
-    try {
-      const validCryptoAmount = await ValueValidation.validate(cryptoAmount);
-
-      if (selectedCrypto && validCryptoAmount) {
-        const amountToAdd = parseFloat(validCryptoAmount);
-        dispatch(
-          addToPortfolio({ symbol: selectedCrypto.symbol, amount: amountToAdd })
-        );
-        message.success(
-          `${validCryptoAmount} ${selectedCrypto.symbol} добавлено в ваш портфель`
-        );
-      }
-
-      setIsModalVisible(false);
-      setCryptoAmount("");
-    } catch (err) {
-      if (err instanceof yup.ValidationError) {
-        message.error(err.errors[0]);
-      }
-    }
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setCryptoAmount("");
+    dispatch(openModal(crypto.symbol)); 
   };
 
   const columns: ColumnsType<DataType> = [
@@ -159,7 +90,7 @@ const CryptocurrencyTable: React.FC = () => {
       render: (text, record) => (
         <span
           style={{ cursor: "pointer", fontWeight: "bold" }}
-          onClick={() => handleRowClick(record.key)} // Навигация при клике на строку
+          onClick={() => handleRowClick(record.key)}
         >
           {text}
         </span>
@@ -217,23 +148,11 @@ const CryptocurrencyTable: React.FC = () => {
         dataSource={tableData}
         rowKey="key"
         onRow={(record) => ({
-          onClick: () => handleRowClick(record.key), // Навигация при клике на строку
+          onClick: () => handleRowClick(record.key),
         })}
       />
 
-      <Modal
-        title="Добавить в инвестиционный портфель"
-        open={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <p>Введите количество {selectedCrypto?.symbol} для покупки:</p>
-        <Input
-          value={cryptoAmount}
-          onChange={(e) => setCryptoAmount(e.target.value)}
-          placeholder="Введите количество"
-        />
-      </Modal>
+      <AddToPortfolioModal />
     </>
   );
 };

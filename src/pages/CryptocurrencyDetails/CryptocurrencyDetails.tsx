@@ -17,8 +17,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const API_URL = "https://api.coincap.io/v2";
 const API_KEY = import.meta.env.VITE_API_KEY;
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface HistoricalData {
   time: number;
@@ -37,46 +37,35 @@ const CryptocurrencyDetails: React.FC = () => {
 
   useEffect(() => {
     const fetchCryptoData = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/assets/${id}`, {
-          headers: {
-            Authorization: API_KEY ? `Bearer ${API_KEY}` : "",
-          },
-        });
-        setCryptoData(response.data.data);
-      } catch (error) {
-        console.error("Error fetching crypto data:", error);
-        message.error("Не удалось загрузить данные о криптовалюте.");
-      }
-    };
-
-    const fetchHistoricalData = async () => {
       const endTime = new Date().getTime();
       const startTime = endTime - 7 * 24 * 60 * 60 * 1000;
 
       try {
-        const response = await axios.get(`${API_URL}/assets/${id}/history`, {
-          params: {
-            interval: "d1",
-            start: startTime,
-            end: endTime,
-          },
-          headers: {
-            Authorization: API_KEY ? `Bearer ${API_KEY}` : "",
-          },
-        });
+        const [cryptoResponse, historyResponse] = await Promise.all([
+          axios.get(`${API_URL}/assets/${id}`, {
+            headers: {
+              Authorization: API_KEY ? `Bearer ${API_KEY}` : "",
+            },
+          }),
+          axios.get(`${API_URL}/assets/${id}/history`, {
+            params: { interval: "d1", start: startTime, end: endTime },
+            headers: {
+              Authorization: API_KEY ? `Bearer ${API_KEY}` : "",
+            },
+          }),
+        ]);
 
-        setHistoricalData(response.data.data);
+        setCryptoData(cryptoResponse.data.data);
+        setHistoricalData(historyResponse.data.data);
       } catch (error) {
-        console.error("Error fetching historical data:", error);
-        message.error("Не удалось загрузить исторические данные.");
+        console.error("Error fetching data:", error);
+        message.error("Не удалось загрузить данные о криптовалюте.");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchCryptoData();
-    fetchHistoricalData();
   }, [id]);
 
   const handleAddToPortfolio = () => {
@@ -126,7 +115,7 @@ const CryptocurrencyDetails: React.FC = () => {
       </h2>
       <p>Текущая цена: {parseFloat(cryptoData.priceUsd).toFixed(2)} USD</p>
       <p>
-        Капитализация: {(parseFloat(cryptoData.marketCapUsd) / 1e9).toFixed(2)}{" "}
+        Капитализация: {(parseFloat(cryptoData.marketCapUsd) / 1e9).toFixed(2)}
         млрд $
       </p>
       <p>Количество в портфеле: {portfolio[cryptoData.symbol] || 0}</p>
