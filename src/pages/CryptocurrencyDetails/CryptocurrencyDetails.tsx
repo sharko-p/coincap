@@ -16,6 +16,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { formatFixed } from "../../utils/helpers"; 
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const API_URL = import.meta.env.VITE_API_URL;
@@ -113,9 +114,9 @@ const CryptocurrencyDetails: React.FC = () => {
       <h2>
         {cryptoData.name} ({cryptoData.symbol})
       </h2>
-      <p>Текущая цена: {parseFloat(cryptoData.priceUsd).toFixed(2)} USD</p>
+      <p>Текущая цена: {formatFixed(cryptoData.priceUsd)} USD</p>
       <p>
-        Капитализация: {(parseFloat(cryptoData.marketCapUsd) / 1e9).toFixed(2)}
+        Капитализация: {formatFixed(parseFloat(cryptoData.marketCapUsd) / 1e9)}
         млрд $
       </p>
       <p>Количество в портфеле: {portfolio[cryptoData.symbol] || 0}</p>

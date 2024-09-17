@@ -7,6 +7,7 @@ import { openModal } from "../../redux/slices/PortfolioSlice";
 import { Crypto, CryptoApiResponse, DataType } from "./types";
 import AddToPortfolioModal from "../addPortfolioModal/AddPorfolioModal";
 import type { ColumnsType } from "antd/es/table";
+import { formatFixed } from "../../utils/helpers"; 
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const API_URL = import.meta.env.VITE_API_URL;
@@ -32,20 +33,18 @@ const CryptocurrencyTable: React.FC = () => {
         setCryptos(response.data.data);
 
         const tableData = response.data.data.map((crypto) => {
-          const inBillions = (
+          const inBillions = formatFixed(
             parseFloat(crypto.marketCapUsd) / 1000000000
-          ).toFixed(2);
+          );
           return {
             key: String(crypto.id),
             rank: crypto.rank,
             symbol: crypto.symbol,
             name: crypto.name,
-            vwap24Hr: `${parseFloat(crypto.vwap24Hr).toFixed(2)}$`,
-            changePercent24Hr: `${parseFloat(crypto.changePercent24Hr).toFixed(
-              2
-            )}%`,
+            vwap24Hr: `${formatFixed(crypto.vwap24Hr)}$`,
+            changePercent24Hr: `${formatFixed(crypto.changePercent24Hr)}%`,
             marketCapUsd: `${inBillions} млрд $`,
-            priceUsd: `${parseFloat(crypto.priceUsd).toFixed(2)}$`,
+            priceUsd: `${formatFixed(crypto.priceUsd)}$`,
             description: crypto.description || "No description available",
           };
         });

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Modal, Button, message } from "antd";
 import axios from "axios";
 import { removeFromPortfolio } from "../../redux/slices/PortfolioSlice";
+import { formatFixed } from "../../utils/helpers"; 
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const API_URL = import.meta.env.VITE_API_URL;
@@ -76,7 +77,7 @@ const Portfolio = () => {
         />
         <div>
           <p>Итого: </p>
-          <p>{totalValue.toFixed(2)} USD</p>
+          <p>{formatFixed(totalValue)} USD</p>
         </div>
       </div>
 
@@ -86,12 +87,12 @@ const Portfolio = () => {
         onCancel={handleCancel}
         footer={null}
       >
-        <p>Общая сумма портфеля: {totalValue.toFixed(2)} USD</p>
+        <p>Общая сумма портфеля: {formatFixed(totalValue)} USD</p>
         <ul>
           {Object.keys(portfolio).map((symbol) => (
             <li key={symbol}>
               {symbol}: {portfolio[symbol].toFixed(4)} (
-              {(portfolio[symbol] * (cryptoPrices[symbol] || 0)).toFixed(2)} USD)
+              {formatFixed(portfolio[symbol] * (cryptoPrices[symbol] || 0))} USD)
               <Button type="link" onClick={() => handleRemoveCrypto(symbol)}>
                 Удалить
               </Button>
