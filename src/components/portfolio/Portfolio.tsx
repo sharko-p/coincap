@@ -1,18 +1,16 @@
-import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import { ShoppingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Modal, Button, message } from "antd";
-import axios from "axios";
 import { removeFromPortfolio } from "../../redux/slices/PortfolioSlice";
-import { formatFixed } from "../../utils/helpers"; 
+import { formatFixed } from "../../utils/helpers";
+import { fetchAllCryptos } from "../../api/fetchAllCryptos";  
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";  
 
-const API_KEY = import.meta.env.VITE_API_KEY;
-const API_URL = import.meta.env.VITE_API_URL;
 
 const Portfolio = () => {
-  const dispatch = useDispatch();
-  const portfolio = useSelector((state: RootState) => state.portfolio.cryptos);
+  const dispatch = useAppDispatch();
+  const portfolio = useAppSelector((state: RootState) => state.portfolio.cryptos);
   const [cryptoPrices, setCryptoPrices] = useState<{ [symbol: string]: number }>({});
   const [totalValue, setTotalValue] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -20,19 +18,11 @@ const Portfolio = () => {
   useEffect(() => {
     const fetchCryptoPrices = async () => {
       try {
-        const response = await axios.get(`${API_URL}/assets`, {
-          headers: {
-            Authorization: API_KEY ? `Bearer ${API_KEY}` : "",
-          },
-        });
-
+        const cryptos = await fetchAllCryptos(); 
         const prices: { [symbol: string]: number } = {};
-        response.data.data.forEach(
-          (crypto: { symbol: string; priceUsd: string }) => {
-            prices[crypto.symbol] = parseFloat(crypto.priceUsd);
-          }
-        );
-
+        cryptos.forEach((crypto) => {
+          prices[crypto.symbol] = parseFloat(crypto.priceUsd);
+        });
         setCryptoPrices(prices);
       } catch (err) {
         console.error("Error fetching crypto prices:", err);

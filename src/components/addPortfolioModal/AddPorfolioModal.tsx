@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { Modal, Input, message } from "antd";
 import * as yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { addToPortfolio, closeModal } from "../../redux/slices/PortfolioSlice";
 import { ValueValidation } from "./Validation";
 
 const AddToPortfolioModal: React.FC = () => {
   const [cryptoAmount, setCryptoAmount] = useState<string>("");
-  const dispatch = useDispatch();
-  const { isModalVisible, selectedCrypto } = useSelector(
-    (state: RootState) => state.portfolio
+  const dispatch = useAppDispatch();
+  const { isModalVisible, selectedCrypto } = useAppSelector(
+    (state) => state.portfolio
   );
 
   const handleOk = async () => {

@@ -1,61 +1,58 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Table, Button } from "antd";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../redux/hooks";
 import { openModal } from "../../redux/slices/PortfolioSlice";
-import { Crypto, CryptoApiResponse, DataType } from "./types";
+import { Crypto, DataType } from "./types";
 import AddToPortfolioModal from "../addPortfolioModal/AddPorfolioModal";
 import type { ColumnsType } from "antd/es/table";
-import { formatFixed } from "../../utils/helpers"; 
-
-const API_KEY = import.meta.env.VITE_API_KEY;
-const API_URL = import.meta.env.VITE_API_URL;
+import { formatFixed } from "../../utils/helpers";
+import { fetchAllCryptos } from "../../api/fetchAllCryptos";
 
 const CryptocurrencyTable: React.FC = () => {
   const [cryptos, setCryptos] = useState<Crypto[]>([]);
   const [tableData, setTableData] = useState<DataType[]>([]);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const fetchCryptos = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get<CryptoApiResponse>(
-          `${API_URL}/assets`,
-          {
-            headers: {
-              Authorization: API_KEY ? `Bearer ${API_KEY}` : "",
-            },
-          }
-        );
+        const data = await fetchAllCryptos();
+        setCryptos(data);
 
-        setCryptos(response.data.data);
+        const formattedData = data.map((crypto) => {
+          const marketCapUsd = crypto.marketCapUsd
+            ? parseFloat(crypto.marketCapUsd)
+            : 0;
+          const inBillions = formatFixed(marketCapUsd / 1000000000);
 
-        const tableData = response.data.data.map((crypto) => {
-          const inBillions = formatFixed(
-            parseFloat(crypto.marketCapUsd) / 1000000000
-          );
           return {
             key: String(crypto.id),
             rank: crypto.rank,
             symbol: crypto.symbol,
             name: crypto.name,
-            vwap24Hr: `${formatFixed(crypto.vwap24Hr)}$`,
-            changePercent24Hr: `${formatFixed(crypto.changePercent24Hr)}%`,
+            vwap24Hr: crypto.vwap24Hr
+              ? `${formatFixed(crypto.vwap24Hr)}$`
+              : "No description available",
+            changePercent24Hr: crypto.changePercent24Hr
+              ? `${formatFixed(crypto.changePercent24Hr)}%`
+              : "N/A",
             marketCapUsd: `${inBillions} млрд $`,
-            priceUsd: `${formatFixed(crypto.priceUsd)}$`,
+            priceUsd: crypto.priceUsd
+              ? `${formatFixed(crypto.priceUsd)}$`
+              : "No description available",
             description: crypto.description || "No description available",
           };
         });
 
-        setTableData(tableData);
+        setTableData(formattedData);
       } catch (err) {
         console.error("Error fetching cryptos:", err);
       }
     };
 
-    fetchCryptos();
+    fetchData();
   }, []);
 
   const handleRowClick = (cryptoId: string) => {
@@ -64,7 +61,7 @@ const CryptocurrencyTable: React.FC = () => {
 
   const handleAddClick = (crypto: Crypto, e: React.MouseEvent) => {
     e.stopPropagation();
-    dispatch(openModal(crypto.symbol)); 
+    dispatch(openModal(crypto.symbol));
   };
 
   const columns: ColumnsType<DataType> = [
@@ -128,15 +125,14 @@ const CryptocurrencyTable: React.FC = () => {
     {
       title: "Actions",
       key: "actions",
-      render: (_, record) => (
-        <Button
-          onClick={(e) =>
-            handleAddClick(cryptos.find((c) => c.id === record.key)!, e)
-          }
-        >
-          +
-        </Button>
-      ),
+      render: (_, record) => {
+        const crypto = cryptos.find((c) => c.id === record.key);
+        return (
+          <Button onClick={(e) => crypto && handleAddClick(crypto, e)}>
+            +
+          </Button>
+        );
+      },
     },
   ];
 

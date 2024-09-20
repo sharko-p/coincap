@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Input, Button, message, Spin } from "antd";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addToPortfolio } from "../../redux/slices/PortfolioSlice";
-import { RootState } from "../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import type { RootState } from "../../redux/store";
 import {
   LineChart,
   Line,
@@ -16,48 +15,38 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { formatFixed } from "../../utils/helpers"; 
-
-const API_KEY = import.meta.env.VITE_API_KEY;
-const API_URL = import.meta.env.VITE_API_URL;
-
-interface HistoricalData {
-  time: number;
-  priceUsd: string;
-}
+import { formatFixed } from "../../utils/helpers";
+import {
+  fetchCryptoDetails,
+  fetchCryptoHistory,
+} from "../../api/fetchCryptoHistory";
+import { CryptoData, HistoricalData } from "./types";
 
 const CryptocurrencyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [cryptoData, setCryptoData] = useState<any>(null);
-  const [cryptoAmount, setCryptoAmount] = useState("");
+  const [cryptoData, setCryptoData] = useState<CryptoData | null>(null);
+  const [cryptoAmount, setCryptoAmount] = useState<string>("");
   const [historicalData, setHistoricalData] = useState<HistoricalData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const portfolio = useSelector((state: RootState) => state.portfolio.cryptos);
+  const portfolio = useAppSelector(
+    (state: RootState) => state.portfolio.cryptos
+  );
 
   useEffect(() => {
-    const fetchCryptoData = async () => {
+    const fetchData = async () => {
       const endTime = new Date().getTime();
       const startTime = endTime - 7 * 24 * 60 * 60 * 1000;
 
       try {
-        const [cryptoResponse, historyResponse] = await Promise.all([
-          axios.get(`${API_URL}/assets/${id}`, {
-            headers: {
-              Authorization: API_KEY ? `Bearer ${API_KEY}` : "",
-            },
-          }),
-          axios.get(`${API_URL}/assets/${id}/history`, {
-            params: { interval: "d1", start: startTime, end: endTime },
-            headers: {
-              Authorization: API_KEY ? `Bearer ${API_KEY}` : "",
-            },
-          }),
+        const [cryptoDetails, historyData] = await Promise.all([
+          fetchCryptoDetails(id!),
+          fetchCryptoHistory(id!, startTime, endTime),
         ]);
 
-        setCryptoData(cryptoResponse.data.data);
-        setHistoricalData(historyResponse.data.data);
+        setCryptoData(cryptoDetails);
+        setHistoricalData(historyData);
       } catch (error) {
         console.error("Error fetching data:", error);
         message.error("Не удалось загрузить данные о криптовалюте.");
@@ -66,7 +55,7 @@ const CryptocurrencyDetails: React.FC = () => {
       }
     };
 
-    fetchCryptoData();
+    fetchData();
   }, [id]);
 
   const handleAddToPortfolio = () => {
