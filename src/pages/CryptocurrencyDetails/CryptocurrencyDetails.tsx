@@ -21,6 +21,7 @@ import {
   fetchCryptoHistory,
 } from "../../api/fetchCryptoHistory";
 import { CryptoData, HistoricalData } from "./types";
+import {Container} from './styleCryptovurrencyDetails'
 
 const CryptocurrencyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -98,8 +99,9 @@ const CryptocurrencyDetails: React.FC = () => {
 
   return (
     <div
-      style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+      style={{ display: "flex", textAlign: "center", alignItems: "center", flexDirection: "column", }}
     >
+      <Container>
       <h2>
         {cryptoData.name} ({cryptoData.symbol})
       </h2>
@@ -109,6 +111,7 @@ const CryptocurrencyDetails: React.FC = () => {
         млрд $
       </p>
       <p>Количество в портфеле: {portfolio[cryptoData.symbol] || 0}</p>
+  
       <div>
         <h3>Добавить {cryptoData.name} в портфель</h3>
         <Input
@@ -120,12 +123,13 @@ const CryptocurrencyDetails: React.FC = () => {
         <Button type="primary" onClick={handleAddToPortfolio}>
           Добавить
         </Button>
-      </div>
-      <h3 style={{ marginTop: "40px" }}>
+    
+      <h3 style={{ marginTop: "30px" }}>
         Изменение цены {cryptoData.name} за последнюю неделю
       </h3>
+      </div>     </Container>
       {transformedData.length > 0 ? (
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={350}>
           <LineChart
             data={transformedData}
             margin={{
@@ -152,7 +156,7 @@ const CryptocurrencyDetails: React.FC = () => {
         <p>Нет доступных исторических данных для отображения.</p>
       )}
 
-      <Button onClick={() => navigate(`/`)}>
+      <Button style={{marginTop:'15px'}} type="primary" onClick={() => navigate(`/`)}>
         Вернуться к перечню криптовалют
       </Button>
     </div>
