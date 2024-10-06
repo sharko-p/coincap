@@ -21,7 +21,7 @@ import {
   fetchCryptoHistory,
 } from "../../api/fetchCryptoHistory";
 import { CryptoData, HistoricalData } from "./types";
-import {Container} from './styleCryptovurrencyDetails'
+import { Container } from "./styleCryptovurrencyDetails";
 
 const CryptocurrencyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -99,35 +99,41 @@ const CryptocurrencyDetails: React.FC = () => {
 
   return (
     <div
-      style={{ display: "flex", textAlign: "center", alignItems: "center", flexDirection: "column", }}
+      style={{
+        display: "flex",
+        textAlign: "center",
+        alignItems: "center",
+        flexDirection: "column",
+      }}
     >
       <Container>
-      <h2>
-        {cryptoData.name} ({cryptoData.symbol})
-      </h2>
-      <p>Текущая цена: {formatFixed(cryptoData.priceUsd)} USD</p>
-      <p>
-        Капитализация: {formatFixed(parseFloat(cryptoData.marketCapUsd) / 1e9)}
-        млрд $
-      </p>
-      <p>Количество в портфеле: {portfolio[cryptoData.symbol] || 0}</p>
-  
-      <div>
-        <h3>Добавить {cryptoData.name} в портфель</h3>
-        <Input
-          value={cryptoAmount}
-          onChange={(e) => setCryptoAmount(e.target.value)}
-          placeholder="Введите количество"
-          style={{ width: "200px", marginRight: "10px" }}
-        />
-        <Button type="primary" onClick={handleAddToPortfolio}>
-          Добавить
-        </Button>
-    
-      <h3 style={{ marginTop: "30px" }}>
-        Изменение цены {cryptoData.name} за последнюю неделю
-      </h3>
-      </div>     </Container>
+        <h2>
+          {cryptoData.name} ({cryptoData.symbol})
+        </h2>
+        <p>Текущая цена: {formatFixed(cryptoData.priceUsd)} USD</p>
+        <p>
+          Капитализация:{" "}
+          {formatFixed(parseFloat(cryptoData.marketCapUsd) / 1e9)}
+          млрд $
+        </p>
+        <p>Количество в портфеле: {portfolio[cryptoData.symbol] || 0}</p>
+        <div>
+          <h3>Добавить {cryptoData.name} в портфель</h3>
+          <Input
+            value={cryptoAmount}
+            onChange={(e) => setCryptoAmount(e.target.value)}
+            placeholder="Введите количество"
+            style={{ width: "200px", marginRight: "10px" }}
+          />
+          <Button type="primary" onClick={handleAddToPortfolio}>
+            Добавить
+          </Button>
+
+          <h3 style={{ marginTop: "30px" }}>
+            Изменение цены {cryptoData.name} за последнюю неделю
+          </h3>
+        </div>{" "}
+      </Container>
       {transformedData.length > 0 ? (
         <ResponsiveContainer width="100%" height={350}>
           <LineChart
@@ -156,7 +162,11 @@ const CryptocurrencyDetails: React.FC = () => {
         <p>Нет доступных исторических данных для отображения.</p>
       )}
 
-      <Button style={{marginTop:'15px'}} type="primary" onClick={() => navigate(`/`)}>
+      <Button
+        style={{ marginTop: "15px" }}
+        type="primary"
+        onClick={() => navigate(`/`)}
+      >
         Вернуться к перечню криптовалют
       </Button>
     </div>
